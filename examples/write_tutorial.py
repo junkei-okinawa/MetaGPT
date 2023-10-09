@@ -7,15 +7,17 @@
 """
 import asyncio
 
+import fire
 from metagpt.roles.tutorial_assistant import TutorialAssistant
 
 
-async def main():
-    topic = "Write a tutorial about MySQL"
-    role = TutorialAssistant(language="Chinese")
+async def write_tutorial(topic="Write a tutorial about MySQL", language="Japanese"):
+    role = TutorialAssistant(language=language)
     await role.run(topic)
 
+def main(topic="Write a tutorial about MySQL", language="Japanese"):
+    asyncio.run(write_tutorial(topic, language))
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    fire.Fire(main)
 

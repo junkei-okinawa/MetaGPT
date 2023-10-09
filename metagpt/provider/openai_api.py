@@ -161,19 +161,26 @@ class OpenAIGPTAPI(BaseGPTAPI, RateLimiter):
 
     async def _achat_completion_stream(self, messages: list[dict]) -> str:
         response = await openai.ChatCompletion.acreate(**self._cons_kwargs(messages), stream=True)
+        
 
         # create variables to collect the stream of chunks
         collected_chunks = []
         collected_messages = []
+        from collections.abc import Iterable
         # iterate through the stream of events
-        async for chunk in response:
-            collected_chunks.append(chunk)  # save the event response
-            choices = chunk["choices"]
-            if len(choices) > 0:
-                chunk_message = chunk["choices"][0].get("delta", {})  # extract the message
-                collected_messages.append(chunk_message)  # save the message
-                if "content" in chunk_message:
-                    print(chunk_message["content"], end="")
+        try:
+            async for chunk in response:
+                collected_chunks.append(chunk)  # save the event response
+                choices = chunk["choices"]
+                if len(choices) > 0:
+                    chunk_message = chunk["choices"][0].get("delta", {})  # extract the message
+                    collected_messages.append(chunk_message)  # save the message
+                    if "content" in chunk_message:
+                        print(chunk_message["content"], end="")
+        except:
+            message = response["choices"][0]["message"]["content"]
+            print(message)
+            collected_messages.append({"content": message})
         print()
 
         full_reply_content = "".join([m.get("content", "") for m in collected_messages])
@@ -226,7 +233,7 @@ class OpenAIGPTAPI(BaseGPTAPI, RateLimiter):
         return await self._achat_completion(messages)
 
     @retry(
-        stop=stop_after_attempt(3),
+        stop=stop_after_attempt(10000),# ⭐️Edited
         wait=wait_fixed(1),
         after=after_log(logger, logger.level("WARNING").name),
         retry=retry_if_exception_type(APIConnectionError),
@@ -234,8 +241,13 @@ class OpenAIGPTAPI(BaseGPTAPI, RateLimiter):
     )
     async def acompletion_text(self, messages: list[dict], stream=False) -> str:
         """when streaming, print each token in place."""
+        # import inspect
+        # print(inspect.stack()[1].filename)
+        # print(inspect.stack()[1].function)
+        # print("stream: ", stream)
         if stream:
-            return await self._achat_completion_stream(messages)
+            resp = await self._achat_completion_stream(messages)
+            return resp
         rsp = await self._achat_completion(messages)
         return self.get_choice_text(rsp)
 

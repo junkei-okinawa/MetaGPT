@@ -164,3 +164,10 @@ tmp
 output.wav
 metagpt/roles/idea_agent.py
 .aider*
+
+workspace
+node_modules
+logs
+package.json
+package-lock.json
+config/config.yaml

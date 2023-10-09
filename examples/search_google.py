@@ -12,7 +12,7 @@ from metagpt.roles import Searcher
 
 
 async def main():
-    await Searcher().run("What are some good sun protection products?")
+    await Searcher().run("Tell me about MetaGPT.")
 
 
 if __name__ == '__main__':

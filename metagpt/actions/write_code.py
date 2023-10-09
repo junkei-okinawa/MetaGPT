@@ -66,7 +66,10 @@ class WriteCode(Action):
         code_path.write_text(code)
         logger.info(f"Saving Code to {code_path}")
 
-    @retry(stop=stop_after_attempt(2), wait=wait_fixed(1))
+    @retry(
+            stop=stop_after_attempt(10000),# ⭐️Edited
+            wait=wait_fixed(1)
+            )
     async def write_code(self, prompt):
         code_rsp = await self._aask(prompt)
         code = CodeParser.parse_code(block="", text=code_rsp)

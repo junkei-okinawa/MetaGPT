@@ -49,7 +49,10 @@ class Action(ABC):
         system_msgs.append(self.prefix)
         return await self.llm.aask(prompt, system_msgs)
 
-    @retry(stop=stop_after_attempt(3), wait=wait_fixed(1))
+    @retry(
+            stop=stop_after_attempt(10000),# ⭐️Edited
+            wait=wait_fixed(1)
+            )
     async def _aask_v1(
         self,
         prompt: str,

@@ -21,17 +21,16 @@ from metagpt.tools.search_engine import SkSearchEngine
 
 
 async def main():
-    # await basic_planner_example()
+    await basic_planner_example()
     # await action_planner_example()
 
     # await sequential_planner_example()
-    await basic_planner_web_search_example()
+    # await basic_planner_web_search_example()
 
 
 async def basic_planner_example():
     task = """
-    Tomorrow is Valentine's day. I need to come up with a few date ideas. She speaks French so write it in French.
-    Convert the text to uppercase"""
+    秋の東京で休みの日にのんびり過ごしたい。どこかいい場所はないかな？"""
     role = SkAgent()
 
     # let's give the agent some skills
